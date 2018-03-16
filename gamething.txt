@@ -1,0 +1,78 @@
+Game Statement: 
+
+AI Concepts:
+-Search Algorithm: reaches the goal state through a path with a cost.
+Initial state: two players, no points.
+Goal state: reach player or estimate of where player is headed. Obtain a score of 7 to win.
+Players: human player and AI
+Actions: A player making a move or not(max 2 moves) and either deflecting the puck or missing. Approx one or two moves can be made by each pusher. This will rely on the location of the puck.
+Result: puck deflected towards location on opponent’s side.
+Utility values: max’s score, min’s score.
+
+Rules:
+	-The AI makes the first hit.
+	-Once a player makes a hit, the opponent can only move up to 2 places.
+	-A player has to be at the same place as the puck’s target the time it arrives.
+	-
+
+Tools:
+Google drive- store our program files]
+Random number generator 
+
+Links:
+	https://gamedev.stackexchange.com/questions/50344/how-would-i-make-an-air-hockey-ai
+https://www.codeproject.com/Articles/432054/Air-hockey
+Game tree pseudocode: https://wiki.scratch.mit.edu/wiki/Game_Tree
+
+Game tree:
+
+Assumptions: 
+-Game starts with puck on AI, AI hits the puck first from its middle spot. Player must move to right place to deflect puck back to AI, then vice versa.
+-When a hit is made, physics or RNG decide which place in opponent’s side puck goes based on its origin place.
+-If a player can’t reach the place or the player doesn’t place the stick at the puck’s target place in time, a point will be scored.
+ -Game goes back and forth until a player misses the puck in time. Restart until game reaches 7 points for 1 side.
+	-
+Pseudocode?
+Assume: 
+R- current round
+P1: AI player
+P2: human player
+C: current move
+Game start, round 0. P1 and P2 have no points.
+P1 starts game, c=root of tree. Hits the puck to a spot on P2’s side.
+Decides move that is determined by minimax to win the game the quickest.
+RNG combined with decision to determine actual hit. Choice is general direction of puck.
+C.target = outputted spot on opponent’s side.
+P2 has to move to spot the puck is headed towards (attribute of current state). Can move up or down a maximum of two spaces.
+If P2 is in spot puck is headed to at time it reaches, puck is deflected back to P1.
+C’s origin reassigned to C’s target attribute.
+C’s target is now a spot on P1’s side. Else, puck passes (origin = -1), round over, P1 earns point, P1 earns point (C is a terminal node).
+Repeat until one player lets puck pass, terminal node reach (payoff is +1 for winner, -1 for loser).
+C resets to start of game.
+Repeat until score reaches 7 for one side.
+
+
+Game Tree Node:
+	Attributes:
+		Origin of hit
+		Destination of hit
+		Is Terminal?
+		P1 payoff
+		P2 payoff
+	Methods:
+		-Get origin and destination
+-Generate children nodes, where origin values are destination value of parent node, if hit made.
+
+Game Tree:
+	Attributes: max # of turns (min and max combined)
+		-Two arrays, one for values of spots on AI side and one for spots on player side.
+		-
+	Methods: minimax algo 
+	-Upon instantiation, setup a Game tree.
+-Start loop where turn# = 0, starting with root node where origin is middle spot of AI’s (max) side.
+-Generate children of the node with each possible destinations (looped through values array of opposing player), looping through each possible int value for spots on opponent’s side.
+-If the destination is a spot out of opponent’s reach, make it a child that is a terminal node (isTerminal = true, payoffs != -1)
+-Loop until max # of turns met.
+
+-AI pusher generates game tree of limited height at start of game, round 0. (Limited cuz the tree might go on forever).
+-After round ends, current node resets to root of game tree.
